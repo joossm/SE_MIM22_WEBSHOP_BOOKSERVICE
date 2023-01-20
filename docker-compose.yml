@@ -1,0 +1,15 @@
+#  --------------------------------------------------------------------------------
+version: '3.8'
+services:
+  bookservice:
+    networks:
+        - bookstore
+    build: ./
+    container_name: bookservice
+    working_dir: /SE_MIM22_WEBSHOP_BOOKSERVICE
+    ports:
+      - "8440:8440"
+
+networks:
+  bookstore:
+    name: "bookstore"
