@@ -17,19 +17,23 @@ func GetAllBooks(responseWriter http.ResponseWriter, request *http.Request) {
 		result, err := db.Query("SELECT * FROM books")
 		errorHandler(err)
 		var books []model.Book
-		for result.Next() {
-			var book model.Book
-			err = result.Scan(&book.ID, &book.Titel, &book.EAN, &book.Content, &book.Price)
-			errorHandler(err)
-			books = append(books, book)
+		if result != nil {
+			for result.Next() {
+				var book model.Book
+				err = result.Scan(&book.Id, &book.Titel, &book.EAN, &book.Content, &book.Price)
+				errorHandler(err)
+				books = append(books, book)
+			}
 		}
-		jsonBooks, err := json.Marshal(books)
+		jsonBook, err := json.Marshal(books)
 		errorHandler(err)
-		_, responseErr := responseWriter.Write(jsonBooks)
+		_, responseErr := responseWriter.Write(jsonBook)
 		errorHandler(responseErr)
 		return
 	default:
-		_, responseErr := responseWriter.Write([]byte("THIS IS A GET REQUEST"))
+		js, err := json.Marshal("THIS IS A GET REQUEST")
+		errorHandler(err)
+		_, responseErr := responseWriter.Write(js)
 		errorHandler(responseErr)
 		return
 	}
@@ -40,22 +44,26 @@ func GetBookByID(responseWriter http.ResponseWriter, request *http.Request) {
 	case "GET":
 		db := openDB()
 		defer closeDB(db)
-		result, err := db.Query("SELECT * FROM books WHERE ID = ?", request.URL.Query().Get("id"))
+		result, err := db.Query("SELECT * FROM books WHERE Id = ?", request.URL.Query().Get("id"))
 		errorHandler(err)
 		var books []model.Book
-		for result.Next() {
-			var book model.Book
-			err = result.Scan(&book.ID, &book.Titel, &book.EAN, &book.Content, &book.Price)
-			errorHandler(err)
-			books = append(books, book)
+		if result != nil {
+			for result.Next() {
+				var book model.Book
+				err = result.Scan(&book.Id, &book.Titel, &book.EAN, &book.Content, &book.Price)
+				errorHandler(err)
+				books = append(books, book)
+			}
 		}
-		jsonBook, err := json.Marshal(books)
+		jsonBook, err := json.Marshal(books[0])
 		errorHandler(err)
 		_, responseErr := responseWriter.Write(jsonBook)
 		errorHandler(responseErr)
 		return
 	default:
-		_, responseErr := responseWriter.Write([]byte("THIS IS A GET REQUEST"))
+		js, err := json.Marshal("THIS IS A GET REQUEST")
+		errorHandler(err)
+		_, responseErr := responseWriter.Write(js)
 		errorHandler(responseErr)
 		return
 	}

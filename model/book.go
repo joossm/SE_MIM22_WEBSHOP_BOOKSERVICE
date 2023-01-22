@@ -1,7 +1,7 @@
 package model
 
 type Book struct {
-	ID      int
+	Id      int
 	Titel   string
 	EAN     string
 	Content string
